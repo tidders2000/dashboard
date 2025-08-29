@@ -1,0 +1,20 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Profile</h1>
+
+ {{user.first_name}}
+ {{user.last_name}}
+ {{user.profile.practice_name}}
+ {{user.profile.practice}}
+ {{user.username}}
+
+<div >
+<img src="{{user.profile.image.url}}"  alt="'profile picture"  class="img-thumbnail"/>
+
+</div>
+
+
+  {% endblock %}

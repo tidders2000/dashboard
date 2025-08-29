@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- chart.html -->
+<canvas id="myChart"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+fetch("{% url 'chart_data' %}")
+  .then(res => res.json())
+  .then(json => {
+    const ctx = document.getElementById('myChart');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: json.labels, // Practices
+        datasets: json.datasets.map(ds => ({
+          ...ds,
+          backgroundColor: randomColor(),
+        }))
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Absence Days by Practice and Reason'
+          }
+        },
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+
+    function randomColor() {
+      const r = Math.floor(Math.random() * 200);
+      const g = Math.floor(Math.random() * 200);
+      const b = Math.floor(Math.random() * 200);
+      return `rgba(${r}, ${g}, ${b}, 0.6)`;
+    }
+  });
+</script>
+
+
+{% endblock %}

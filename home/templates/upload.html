@@ -1,0 +1,28 @@
+
+{% extends 'base.html' %}
+{% block content %}
+<h1>Upload</h1>
+
+<h2>Absence</h2> 
+<div>Last Entry:{{latest_start}}</div>
+<form method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+  <input type="file" name="csv_file" accept=".csv" required>
+  <button type="submit">Upload</button>
+</form>
+
+<h2>Workforce</h2>
+ <form method='POST' action="{% url 'workforce' %}" enctype="multipart/form-data" class="row row-cols-lg-auto g-3 align-items-center">
+  {% csrf_token %}
+  <input type="file" name="csv_file" accept=".csv" required>
+  <button type="submit">Upload</button>
+</form>
+
+<!-- 
+<h2>Leavers</h2>
+ <form method='POST' action="{% url 'leavers' %}" enctype="multipart/form-data" class="row row-cols-lg-auto g-3 align-items-center">
+  {% csrf_token %}
+  <input type="file" name="csv_file" accept=".csv" required>
+  <button type="submit">Upload</button>
+</form> -->
+{% endblock %}

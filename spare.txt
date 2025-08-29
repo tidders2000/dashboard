@@ -1,0 +1,6 @@
+data rules
+upload all staff
+upload new staff
+upload absence in period - show last date added
+upload leavers in period 
+use hours start date and team to identify

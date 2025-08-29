@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Django
+*.log
+*.pot
+*.py,cover
+db.sqlite3
+media/
+
+# Static & build artifacts
+staticfiles/
+*.egg-info/
+.env
+
+# IDE / OS files
+.vscode/
+.idea/
+*.swp
+.DS_Store

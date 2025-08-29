@@ -1,0 +1,401 @@
+{% extends 'base.html' %}
+
+{% block content %}
+   <a class="navbar-brand" href="#"><img src="{{user.profile.image.url}}"  alt="'profile picture"  class="img-thumbnail" style="height:150px;width:300px;"/></a>
+ <h2 class="text-center">Practice Dashboard</h2>
+
+
+<div class="col-12 p-3" >
+  <form method='POST' action="{% url 'home' %}" enctype="multipart/form-data" class="row row-cols-lg-auto g-3 align-items-center">
+
+<span>Filter by date period</span>
+ <div class="col-12">
+  
+    <label class="visually-hidden" for="inlineFormInputGroupUsername"></label>
+    <div class="input-group">
+      <div class="input-group-text">Start</div>
+      <input type="date" class="form-control" id="id_start" name="start" placeholder="Username">
+    </div>
+  </div>
+   <div class="col-12">
+    <label class="visually-hidden" for="inlineFormInputGroupUsername">Username</label>
+    <div class="input-group">
+      <div class="input-group-text">End</div>
+      <input type="date" class="form-control" id="id_end" name='end' placeholder="Username">
+    </div>
+  </div>
+
+
+ <div class="col-12">
+     {% csrf_token %}
+            
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </div>
+</form>
+</div>
+
+
+<div class="col-12" >
+    <h2>Workforce In Numbers</h2>
+
+
+  
+
+</div>
+
+<div class="card" style="width: 18rem; margin-right:5px;">
+
+  <div class="card-body">
+    <h5 class="card-title">Headcount</h5>
+    <p class="card-text text-center display-2">{{headcount}}</p>
+
+  </div>
+      <div class="card-footer ">
+    Total amount of people employed excluding partners
+  </div>
+</div>
+
+
+<div class="card" style="width: 18rem; margin-right:5px;">
+
+  <div class="card-body">
+    <h5 class="card-title">Total Weekly Hours</h5>
+    <p class="card-text text-center display-2">{{weekly_hours.total}}</p>
+
+  </div>
+      <div class="card-footer ">
+    Total amount of hours weekly used wihtin the practice
+</div>
+
+</div>
+
+
+<div class="card" style="width: 18rem; margin-right:5px;">
+
+  <div class="card-body">
+    <h5 class="card-title">FTE</h5>
+    <p class="card-text text-center display-2">{{fte}}</p>
+
+  </div>
+      <div class="card-footer ">
+  Hours translated to fulltime employees (37.5)
+</div>
+
+</div>
+
+
+
+
+<div class="card" style="width: 18rem; margin-right:5px;">
+
+  <div class="card-body">
+    <h5 class="card-title">Staff Turnover</h5>
+    <p class="card-text text-center display-2">{{turnover}} %</p>
+
+  </div>
+      <div class="card-footer ">
+Staff who have left as a % of total workforce
+</div>
+
+</div>
+
+
+<h4 style="margin-top:20px;margin-bottom:20px;">Headcount by Department</h4>
+<div class="col-12">
+
+  <canvas id="headcount"></canvas>
+
+</div>
+
+<h4 style="margin-top:20px;margin-bottom:20px;">Turnover by Department</h4>
+<div class="col-12">
+<table class="table table-striped">
+  <tr>
+    <th>Department</th>
+    <th>Leavers</th>
+    <th>Headcount</th>
+    <th>Turnover (%)</th>
+  </tr>
+  {% for item in turnover_data %}
+  <tr>
+    <td>{{ item.department }}</td>
+    <td>{{ item.leavers }}</td>
+    <td>{{ item.headcount }}</td>
+    <td>{{ item.turnover_rate }}</td>
+  </tr>
+  {% endfor %}
+</table>
+</div>
+<h4 style="margin-top:20px;margin-bottom:20px;">Diverse workforce</h4>
+<div class="col-12">
+    <canvas id="race"></canvas>
+</div>
+
+<h4 style="margin-top:20px;margin-bottom:20px;">Age workforce</h4>
+<div class="'col-12">
+     <canvas id="ageChart" width="400" height="200"></canvas>
+</div>
+
+<h4 style="margin-top:20px;margin-bottom:20px;">Gender workforce</h4>
+<div class="'col-12">
+  <canvas id="genderChart" width="300px" height="300px" style="height:300px!important;"></canvas>
+</div>
+
+
+<div class="'col-12">
+<h4 style="margin-top:20px;margin-bottom:20px;">Leavers</h4>
+  <table class="table table-success table-striped">
+    <tr>
+      <th>Department</th>
+      <th>Hours</th>
+      <th>Leaving Date</th>
+    </tr>
+       {% for leaver in leavers %}
+   <tr>
+ 
+  
+
+  <td class="table-primary">{{leaver.Department}}</td>
+  
+  <td class="table-primary">{{leaver.hours}}</td>
+  
+  <td class="table-primary">{{leaver.leaving_date}}</td>
+{% endfor %}
+</tr>
+</table>
+</div>
+
+
+<div class="'col-12">
+<h4 style="margin-top:20px;margin-bottom:20px;">Starters</h4>
+  <table class="table table-success table-striped">
+    <tr>
+      <th>Department</th>
+      <th>Hours</th>
+      <th>Start Date</th>
+    </tr>
+   <tr>
+    {% for starter in starters %}
+  
+
+  <td class="table-primary">{{starter.Department}}</td>
+  
+  <td class="table-primary">{{starter.hours}}</td>
+  
+  <td class="table-primary">{{starter.start_date}}</td>
+
+</tr>
+{% endfor %}
+</table>
+</div>
+
+    <h2>Absenteeism</h2>
+
+<div class="col-12">
+
+<b> Practice Absence:</b> {{absence_percent}}% <b> Average Days Absence Per Person</b> {{ average_sick_person}}
+</div>
+
+<div class="col-12">
+    
+<!-- chart.html -->
+
+
+  <canvas id="myChart"></canvas>
+</div>
+
+
+
+<div class="col-12">
+  <h4 style="margin-top:20px;margin-bottom:20px;">Absence by Team</h4>
+  <b> Practice Average Days Absence Per Person</b> {{ average_sick_person}}
+<table class="table table-success table-striped">
+  <tr>
+    <th>Department</th>
+    <th>Total Days Absent</th>
+    <th>Headcount</th>
+    <th>Average Days per Person</th>
+  </tr>
+  {% for item in absence_data %}
+  <tr>
+    <td>{{ item.department }}</td>
+    <td>{{ item.total_days }}</td>
+    <td>{{ item.headcount }}</td>
+    <td>{{ item.average_days }}</td>
+  </tr>
+  {% endfor %}
+</table>
+</div>
+
+ 
+
+<!-- <ul>
+{% for item in gender_counts %}
+    <li>{{ item.gender }}: {{ item.count }}</li>
+{% endfor %}
+</ul> -->
+
+
+<div class="col-6">
+    <canvas id="race"></canvas>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  fetch("{% url 'absence_chart' %}")  // adjust the name to match your url pattern
+    .then(response => response.json())
+    .then(responseData => {
+      const chartData = responseData.data;
+
+      const ctx = document.getElementById('myChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: chartData.labels,
+          datasets: chartData.datasets
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    })
+    .catch(error => console.error('Error loading chart:', error));
+</script>
+<script>
+ 
+(async function () {
+    const data = {
+        datasets: [{
+            data: [{{ ap }},90], // will be injected as a number
+            backgroundColor: ['#FF6384', 'blue']
+        }],
+        labels: ['Absence %']
+    };
+
+    // Example of creating a Chart (optional)
+    const ctx = document.getElementById('ap').getContext('2d');
+    new Chart(ctx, {
+        type: 'pie',
+        data: data,
+         options: {
+        layout: {
+            padding:10
+        }
+    }
+    });
+})();
+</script>
+
+<script>
+  fetch("{% url 'headcount' %}")  // adjust the name to match your url pattern
+    .then(response => response.json())
+    .then(responseData => {
+      const chartData = responseData.data;
+
+      const ctx = document.getElementById('headcount').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+      
+          labels: chartData.labels,
+          datasets: chartData.datasets
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    })
+    .catch(error => console.error('Error loading chart:', error));
+</script>
+
+<script>
+  fetch("{% url 'race' %}")  // adjust the name to match your url pattern
+    .then(response => response.json())
+    .then(responseData => {
+      const chartData = responseData.data;
+
+      const ctx = document.getElementById('race').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: chartData.labels,
+          datasets: chartData.datasets
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    })
+    .catch(error => console.error('Error loading chart:', error));
+</script>
+
+  <script>
+        fetch("{% url 'age' %}")
+            .then(response => response.json())
+            .then(json => {
+                const ctx = document.getElementById('ageChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: json.labels,
+                        datasets: [{
+                            label: 'Number of Employees',
+                            data: json.data,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                precision: 0
+                            }
+                        }
+                    }
+                });
+            });
+    </script>
+
+      <script>
+fetch("{% url 'gender' %}")
+    .then(response => response.json())
+    .then(json => {
+        console.log("Labels:", json.labels);  // should be an array
+        console.log("Data:", json.data);      // should be an array
+
+        const ctx = document.getElementById('genderChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: json.labels,
+                datasets: [{
+                    label: 'Number of Employees',
+                    data: json.data,
+                    borderWidth: 1
+                }]
+            },
+            options: {  cutout: '50%',
+                responsive: true,
+  maintainAspectRatio: false,
+            }
+        });
+    });
+    </script>
+  {% endblock %}

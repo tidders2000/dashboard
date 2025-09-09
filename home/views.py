@@ -176,7 +176,7 @@ def home(request):
         total_hours_period=round(weekly_hours['total']*weeks)
    
         #work out amount of days sick in selected period
-        sick_days = AbsenceData.objects.filter(start__range=[st, en]).aggregate(days_total=Sum("days", default=0),)
+        sick_days = AbsenceData.objects.filter(start__range=[st, en],practice=practice).aggregate(days_total=Sum("days", default=0),)
         #work out sick hours total for period
         total_sick_hours_period= (sick_days['days_total']*7.5)
 

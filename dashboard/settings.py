@@ -90,7 +90,7 @@ WSGI_APPLICATION = 'dashboard.wsgi.application'
 # }
 
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = config("DATABASE_URL", default=os.getenv("DATABASE_URL"))
 
 if not DATABASE_URL:
     raise Exception("DATABASE_URL environment variable is not set")
@@ -136,7 +136,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 STATICFILES_LOCATION = 'static'
